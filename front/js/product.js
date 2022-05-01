@@ -9,7 +9,8 @@ console.log(urlSearchParams);
 const id = urlSearchParams.get("id");
 console.log(id);
 
-//mise en place de la requête GET pour récupérer chaque ID de chaque canapé
+//mise en place de la requête GET avec fetch pour récupérer chaque ID de chaque canapé
+
 fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
   console.log(res);
   res.json().then((canap) => {
