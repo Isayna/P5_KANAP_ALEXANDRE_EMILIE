@@ -26,7 +26,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     let option = document.getElementsByTagName("option")[0];
     let price = document.getElementById("price");
 
-    //récupération des données photos, description et option 
+    //récupération des données photos, description et options
     setElementId(img, canap);
     setImgData(img, canap.imageUrl, canap.altTxt);
 
@@ -36,7 +36,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     setElementId(price, canap);
 
 
-    //intégration HTML de chaque élément 
+    //intégration HTML de chaque élément décrivant les canapés
     price.innerHTML = canap.price;
     title.innerHTML = canap.name;
     para.innerHTML = canap.description;
