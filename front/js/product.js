@@ -48,6 +48,8 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     canap.colors.forEach((colors) => {
       document.getElementById("colors").innerHTML +=
         '<option value="' + colors + '">' + colors + "</option>";
+
+    
     });
   });
 });
@@ -66,3 +68,4 @@ function setElementClass(elem, value) {
   elem.classList.add(value);
   console.log(value);
 }
+
