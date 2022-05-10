@@ -1,4 +1,5 @@
-//récuperation de la chaine de requête dans l'url
+//récuperation de l'url
+//puis récupération de l'id à partir de l'url
 
 const queryString_url_id = window.location.search;
 console.log(queryString_url_id);
@@ -9,32 +10,32 @@ console.log(urlSearchParams);
 const id = urlSearchParams.get("id");
 console.log(id);
 
-//mise en place de la requête GET avec fetch pour récupérer chaque ID de chaque canapé
+//mise en place de la requête GET avec fetch pour récupérer le canapé en fonction de son ID 
 
 fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
   console.log(res);
   res.json().then((canap) => {
 
-    //Intégration de l'imagede chaque canapé choisi
+    //Intégration de l'image du canapé choisi
     let img = document.getElementsByClassName("item__img")[0];
-    console.log(img);
+    
     img.innerHTML +=
-      '<img src="' + canap.imageUrl + '" alt="' + canap.altTxt + '"></img>';
+      '<img src="' + canap.imageUrl + '" alt="' + canap.altTxt + '"/>';
 
     //récupération de chaque élément du DOM pour placer les informations nécessaires pour chaque produit  
     let title = document.getElementById("title");
     let para = document.getElementById("description");
-    let option = document.getElementsByTagName("option")[0];
+    
     let price = document.getElementById("price");
+    let select = document.getElementById("colors");
 
-    //récupération des données photos, description et options
-    setElementId(img, canap);
+    //ajout des données photos, description et options
+    setElementId(img);
     setImgData(img, canap.imageUrl, canap.altTxt);
 
-    setElementId(title, canap);
-    setElementId(para, canap);
-    setElementId(option, canap);
-    setElementId(price, canap);
+    setElementId(title, canap.name);
+    setElementId(para, "canap-desc");
+    setElementId(price, "canap-price");
 
 
     //intégration HTML de chaque élément décrivant les canapés
@@ -44,13 +45,74 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
 
 
 //Création de la boucle pour chaque canapé choisi sur la page d'accueil avec l'option de sa couleur
-    let select = document.getElementById("colors");
-    canap.colors.forEach((colors) => {
-      document.getElementById("colors").innerHTML +=
-        '<option value="' + colors + '">' + colors + "</option>";
-
     
+    canap.colors.forEach((color, index) => {
+      document.getElementById("colors").innerHTML +=
+        `<option id='option-${index}' value="${color}">${color}</option>` 
+
     });
+
+    const btn = document.getElementById('addToCart');
+    
+
+    let colors = document.getElementById('colors');
+    colors.addEventListener('change', function() {
+      productSelected.color = colors.value;
+    });
+    let quantity = document.getElementById('quantity');
+    console.log(quantity)
+    quantity.addEventListener('click', function() {
+    productSelected.quantity = quantity.value;
+    });
+
+    let productSelected = {
+      id: `${id}`,
+      quantity: 1,
+      color: '',
+    };
+
+    let cart = getCart();
+    console.log(cart);
+
+    btn.addEventListener('click', function() {
+      let colorValue = colors.value;
+      let quantityValue = quantity.value;
+      console.log(quantityValue);
+      console.log(colorValue);
+
+      if(colorValue === '') {
+        return;
+      }
+      if(quantityValue === 0 || quantityValue > 100){
+        return;
+      }
+
+      let add = true;
+
+      if(cart === 0) {
+        productSelected.quantity = quantityValue;
+        productSelected.color = colorValue;
+        cart.push(productSelected);
+      } else {
+        cart.forEach((productSelected) => {
+          if((productSelected.id === canap.id) && (productSelected.color === canap.color)) {
+            canap.quantity += productSelected.quantity ;
+          add = false;
+          }
+        });
+        if (add){
+          cart.push(productSelected);
+        }
+      }
+           
+      
+      window.localStorage.setItem('cart', JSON.stringify(cart));
+      console.log('cart', cart);
+      
+      
+      
+    });
+  
   });
 });
 
@@ -60,12 +122,25 @@ function setImgData(img, src, alt) {
   img.setAttribute("alt", alt);
 }
 //fonction permettant d'ajouter un id à un élément HTML
-function setElementId(elem, index) {
-  elem.id = `${elem.nodeName.toLowerCase()}${index}`;
+function setElementId(elem, modifier) {
+  elem.id = `${elem.nodeName.toLowerCase()}${modifier}`;
 }
 //fonction permettant d'ajouter une class à un élément HTML (element fourni en paramètre)
 function setElementClass(elem, value) {
   elem.classList.add(value);
   console.log(value);
 }
+function getCart(){
+  let addItem= window.localStorage.getItem('cart');
+  if(addItem == null) {
+    return [];
+  } else {
+    return JSON.parse(addItem);
+  }
+}
+console.log(getCart);
 
+function saveCart() {
+
+}
+localStorage.clear()
