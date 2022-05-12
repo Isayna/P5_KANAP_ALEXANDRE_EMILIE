@@ -67,7 +67,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
 
     let productSelected = {
       id: `${id}`,
-      quantity: 1,
+      quantity: 0,
       color: '',
     };
 
@@ -96,7 +96,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
       } else {
         cart.forEach((productSelected) => {
           if((productSelected.id === canap.id) && (productSelected.color === canap.color)) {
-            canap.quantity += productSelected.quantity ;
+            productSelected.quantity += productSelected.color;
           add = false;
           }
         });
@@ -140,7 +140,5 @@ function getCart(){
 }
 console.log(getCart);
 
-function saveCart() {
 
-}
-localStorage.clear()
+
