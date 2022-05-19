@@ -59,6 +59,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     colors.addEventListener('change', function() {
       productSelected.color = colors.value;
     });
+
     let quantity = document.getElementById('quantity');
     console.log(quantity)
     quantity.addEventListener('click', function() {
@@ -75,6 +76,15 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     console.log(cart);
 
     btn.addEventListener('click', function() {
+      const popupConfirm = () => {
+
+        if(window.confirm(`${canap.name} ${colors.value} a bien été ajouté au panier 
+        Pour consulter le panier appuyez OK ou ANNULER pour revenir à l'accueil`)){
+       window.location.href = "cart.html";
+      } else {
+       window.location.href = "index.html";
+      }}   
+
       let colorValue = colors.value;
       let quantityValue = quantity.value;
       console.log(quantityValue);
@@ -93,26 +103,25 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
         productSelected.quantity = quantityValue;
         productSelected.color = colorValue;
         cart.push(productSelected);
+        popupConfirm();
       } else {
-        cart.forEach((productSelected) => {
-          if((productSelected.id === canap.id) && (productSelected.color === canap.color)) {
-            productSelected.quantity += productSelected.color;
+        cart.forEach((canap) => {
+          if((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
+            productSelected.quantity ++;
           add = false;
+          popupConfirm();
           }
         });
+        
         if (add){
           cart.push(productSelected);
+          popupConfirm();
         }
       }
-           
       
-      window.localStorage.setItem('cart', JSON.stringify(cart));
-      console.log('cart', cart);
-      
-      
-      
+    window.localStorage.setItem("cart", JSON.stringify(cart));
+      console.log('cart', cart); 
     });
-  
   });
 });
 
@@ -131,14 +140,16 @@ function setElementClass(elem, value) {
   console.log(value);
 }
 function getCart(){
-  let addItem= window.localStorage.getItem('cart');
+  let addItem= window.localStorage.getItem("cart");
+  console.log(addItem);
   if(addItem == null) {
     return [];
   } else {
     return JSON.parse(addItem);
   }
 }
-console.log(getCart);
+
+
 
 
 
