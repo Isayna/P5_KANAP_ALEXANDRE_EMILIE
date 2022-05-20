@@ -1,6 +1,6 @@
 //appel des éléments stockés dans le localStorage sur la page panier
-let addItem = JSON.parse(window.localStorage.getItem("cart"));
-console.log(addItem);
+let item = JSON.parse(window.localStorage.getItem("cart"));
+console.log(item);
 
 
 
@@ -12,89 +12,31 @@ fetch("http://localhost:3000/api/products/")
         res.json().then((canap) => {
             console.log(canap)
            
-            
-
             //récuperation du bloc dans lequel le panier sera affiché
-            const cartItem = document.getElementById('cart__items');
-            
-
-            //création des élements HTML
-            let article = document.createElement('article');
-            let divImg = document.createElement('div');
-            let divContent = document.createElement('div');
-            let divDescription = document.createElement('div');
-            let divSettingsContent = document.createElement('div');
-            let divQuantity = document.createElement('div');
-            let divDelete = document.createElement('div');
-            let img = document.createElement('img');
-            let paraPrice = document.createElement('p');
-            let paraColor = document.createElement('p');
-            let paraQte = document.createElement('p');
-            let paraDelete = document.createElement('p');
-            let title = document.createElement('h2');
-            let input = document.createElement('input');
-
-            //attribution des classes aux balises HTML
-            setElementClass(article, 'cart__item');
-            setElementClass(divImg, 'cart__item__img');
-            setElementClass(divContent, 'cart__item__content');
-            setElementClass(divDescription, 'cart__item__content__description');
-            setElementClass(divSettingsContent, 'cart__item__content__settings');
-            setElementClass(divQuantity, 'cart__item__content__settings__quantity');
-            setElementClass(input, 'itemQuantity');
-            setElementClass(divDelete, 'cart__item__content__settings__delete');
-            setElementClass(paraDelete, 'deleteItem');
-
-
-            //mise en place du conteneur 'article' 
-            cartItem.appendChild(article).innerHTML;
-            article.appendChild(divImg).innerHTML;
-            divImg.appendChild(img).innerHTML;
-            article.appendChild(divContent).innerHTML;
-            divContent.appendChild(divDescription).innerHTML;
-            divDescription.appendChild(title).innerHTML;
-            divDescription.appendChild(paraColor).innerHTML;
-            divDescription.appendChild(paraPrice).innerHTML;
-            article.appendChild(divSettingsContent).innerHTML;
-            divSettingsContent.appendChild(divQuantity).innerHTML;
-            divQuantity.appendChild(paraQte).innerHTML;
-            divQuantity.appendChild(input).innerHTML;
-            article.appendChild(divDelete).innerHTML;
-            divDelete.appendChild(paraDelete).innerHTML;
-            paraQte.innerHTML = 'Qté: ';
-            
-            input.setAttribute('type', 'number');
-
-           
-
-
-
-            
-            
+            const cartItem = document.getElementById('cart__items'); 
+               
             let emptyCart = document.querySelector('cartAndFormContainer, h1');
-
             //affichage si le panier est vide
-
-            if (addItem === null) {
+            if (item === null) {
                 emptyCart.innerHTML += " est vide";
 
                 //si le panier est rempli
 
             } else {
-                addItem.forEach((addItem) => {
-                    console.log(addItem)
-                    let colorValue = addItem.color;
-                    console.log(colorValue);
-                    let qtyValue = addItem.quantity;
-                    console.log(qtyValue);
-                    paraColor.innerHTML = colorValue;
-                    input.innerHTML = qtyValue;
+                item.forEach((item) => {
+                    const product = canap.find(element => element._id == item.id);
+                    console.log(product);
+                    product.color = item.color;
+                   
+                    product.quantity = item.quantity;
+                    console.log(product.quantity);
+                    let article = createProduct(product);
+                    cartItem.appendChild(article);
+                    document.querySelector('divQuantity, input').innerHTML = product.quantity;
+                    
+                    
                 });
-
-                
             }
-
-
         });
     });
 
@@ -116,3 +58,68 @@ function setElementClass(elem, value) {
     elem.classList.add(value);
 }
 
+function createProduct(product) {
+     //création des élements HTML
+     let article = document.createElement('article');
+     let divImg = document.createElement('div');
+     let divContent = document.createElement('div');
+     let divDescription = document.createElement('div');
+     let divSettingsContent = document.createElement('div');
+     let divQuantity = document.createElement('div');
+     let divDelete = document.createElement('div');
+     let img = document.createElement('img');
+     let paraPrice = document.createElement('p');
+     let paraColor = document.createElement('p');
+     let paraQte = document.createElement('p');
+     let paraDelete = document.createElement('p');
+     let title = document.createElement('h2');
+     let input = document.createElement('input');
+
+    //affichage des produits du localStorage sur la page cart.html
+     title.textContent = product.name;
+     paraColor.textContent = product.color;
+     paraPrice.textContent = product.price += '€';
+     img.innerHTML = product.imageUrl; 
+    input.value = product.quantity;
+    
+
+     //attribution des classes aux balises HTML
+     setElementClass(article, 'cart__item');
+     setElementClass(divImg, 'cart__item__img');
+     setElementClass(divContent, 'cart__item__content');
+     setElementClass(divDescription, 'cart__item__content__description');
+     setElementClass(divSettingsContent, 'cart__item__content__settings');
+     setElementClass(divQuantity, 'cart__item__content__settings__quantity');
+     setElementClass(input, 'itemQuantity');
+     setElementClass(divDelete, 'cart__item__content__settings__delete');
+     setElementClass(paraDelete, 'deleteItem');
+
+     //récuperation des images 
+     setImgData(img, product.imageUrl, product.altTxt);
+
+
+     //mise en place du conteneur 'article' 
+     
+     article.appendChild(divImg);
+     divImg.appendChild(img);
+     article.appendChild(divContent);
+     divContent.appendChild(divDescription);
+     divDescription.appendChild(title);
+     divDescription.appendChild(paraColor);
+     divDescription.appendChild(paraPrice);
+     article.appendChild(divSettingsContent);
+     divSettingsContent.appendChild(divQuantity);
+     divQuantity.appendChild(paraQte);
+     divQuantity.appendChild(input);
+     article.appendChild(divDelete);
+     divDelete.appendChild(paraDelete);
+     paraQte.innerHTML =  'Qté: ';
+     paraDelete.innerHTML = 'Supprimer';
+
+     
+     input.setAttribute('type', 'number');
+      
+     return article;
+
+     
+}

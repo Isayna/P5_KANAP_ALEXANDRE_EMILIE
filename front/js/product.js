@@ -107,7 +107,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
       } else {
         cart.forEach((canap) => {
           if((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
-            productSelected.quantity ++;
+            productSelected.quantity = 1;
           add = false;
           popupConfirm();
           }
@@ -140,13 +140,14 @@ function setElementClass(elem, value) {
   console.log(value);
 }
 function getCart(){
-  let addItem= window.localStorage.getItem("cart");
-  console.log(addItem);
-  if(addItem == null) {
+  let item = window.localStorage.getItem("cart");
+  console.log(item);
+  if(item == null) {
     return [];
   } else {
-    return JSON.parse(addItem);
+    return JSON.parse(item);
   }
+  
 }
 
 
