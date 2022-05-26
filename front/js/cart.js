@@ -2,6 +2,7 @@
 let item = JSON.parse(window.localStorage.getItem("cart"));
 console.log(item);
 
+  
 
 
 
@@ -20,23 +21,21 @@ fetch("http://localhost:3000/api/products/")
             if (item === null) {
                 emptyCart.innerHTML += " est vide";
 
-                //si le panier est rempli
+                //si le panier est rempli mise ne place de la bpucle pour lire chaque produit du localStorage
 
             } else {
                 item.forEach((item) => {
+                    //fusion des deux tableaux pour récuperer toutes les données à afficher dans le panier
                     const product = canap.find(element => element._id == item.id);
-                    console.log(product);
                     product.color = item.color;
-                   
                     product.quantity = item.quantity;
-                    console.log(product.quantity);
                     let article = createProduct(product);
-                    cartItem.appendChild(article);
-                    document.querySelector('divQuantity, input').innerHTML = product.quantity;
-                    
-                    
+                    cartItem.appendChild(article); 
+                   
                 });
+                calculateTotal();
             }
+           
         });
     });
 
@@ -78,9 +77,26 @@ function createProduct(product) {
     //affichage des produits du localStorage sur la page cart.html
      title.textContent = product.name;
      paraColor.textContent = product.color;
-     paraPrice.textContent = product.price += '€';
+     paraPrice.textContent = product.price ;
      img.innerHTML = product.imageUrl; 
-    input.value = product.quantity;
+     input.value = product.quantity;
+
+    
+     /*
+     if (product.id === product.id) {
+         const priceTotal = product.quantity * product.price ;
+         console.log(priceTotal);
+        calculTotalPrice.push(priceTotal);
+         const reduced = (accumulator, curr) => accumulator + curr;
+              const totalPrice = calculTotalPrice.reduce(reduced);
+              console.log(totalPrice);
+              let totalArticle = document.querySelector('#totalPrice');
+              console.log(totalArticle);
+              totalArticle.innerHTML = `${totalPrice}`;
+
+     }*/
+     
+     
     
 
      //attribution des classes aux balises HTML
@@ -93,6 +109,7 @@ function createProduct(product) {
      setElementClass(input, 'itemQuantity');
      setElementClass(divDelete, 'cart__item__content__settings__delete');
      setElementClass(paraDelete, 'deleteItem');
+     setElementClass(paraPrice, 'cart__item__price');
 
      //récuperation des images 
      setImgData(img, product.imageUrl, product.altTxt);
@@ -115,11 +132,31 @@ function createProduct(product) {
      divDelete.appendChild(paraDelete);
      paraQte.innerHTML =  'Qté: ';
      paraDelete.innerHTML = 'Supprimer';
-
+ 
+    input.setAttribute('type', 'number'); 
      
-     input.setAttribute('type', 'number');
-      
-     return article;
-
+return article;
      
 }
+//fonction pour calculer le total du panier et incrémenter sur la page cart.html
+function calculateTotal(){
+    let products = document.querySelectorAll('.cart__item');
+    console.log(products);
+     let calculTotalPrice = 0;
+    products.forEach(product =>{
+        console.log(product);
+        let prix = product.querySelector('.cart__item__price').textContent;
+        let quantite = product.querySelector('.itemQuantity').value;
+        let total = prix * quantite;
+        console.log(total)
+        calculTotalPrice = calculTotalPrice + total;    
+    })
+    let totalArticle = document.querySelector('#totalPrice');
+    console.log(totalArticle);
+    totalArticle.innerHTML = `${calculTotalPrice}`;
+
+}
+//fonction pour supprimer un produit du panier
+function remove(){
+
+}               
