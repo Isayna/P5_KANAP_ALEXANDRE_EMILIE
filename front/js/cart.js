@@ -34,6 +34,10 @@ fetch("http://localhost:3000/api/products/")
                    
                 });
                 calculateTotal();
+                calculateArticle();
+                removeFromCart();
+                
+                
             }
            
         });
@@ -70,7 +74,7 @@ function createProduct(product) {
      let paraPrice = document.createElement('p');
      let paraColor = document.createElement('p');
      let paraQte = document.createElement('p');
-     let paraDelete = document.createElement('p');
+     let paraDelete = document.createElement('button');
      let title = document.createElement('h2');
      let input = document.createElement('input');
 
@@ -133,30 +137,74 @@ function createProduct(product) {
      paraQte.innerHTML =  'Qté: ';
      paraDelete.innerHTML = 'Supprimer';
  
-    input.setAttribute('type', 'number'); 
+    input.setAttribute('type', 'number');
+    
+    
      
 return article;
      
 }
+
 //fonction pour calculer le total du panier et incrémenter sur la page cart.html
 function calculateTotal(){
     let products = document.querySelectorAll('.cart__item');
-    console.log(products);
+    console.log(products)
      let calculTotalPrice = 0;
-    products.forEach(product =>{
-        console.log(product);
+    products.forEach(product => {
+       
         let prix = product.querySelector('.cart__item__price').textContent;
         let quantite = product.querySelector('.itemQuantity').value;
         let total = prix * quantite;
         console.log(total)
         calculTotalPrice = calculTotalPrice + total;    
-    })
+    });
     let totalArticle = document.querySelector('#totalPrice');
-    console.log(totalArticle);
     totalArticle.innerHTML = `${calculTotalPrice}`;
-
 }
-//fonction pour supprimer un produit du panier
-function remove(){
+//fonction pour calculer le total des articles du panier
 
-}               
+function calculateArticle() {
+    let products = document.querySelectorAll('.cart__item');
+    let calculateTotalArticle = 0;
+    products.forEach(product => {
+    let quantite = product.querySelector('.itemQuantity').value;       
+    calculateTotalArticle = calculateTotalArticle += quantite ++;   
+    console.log(calculateTotalArticle)
+    });
+    let quantities = document.querySelector('#totalQuantity');
+    quantities.innerHTML = `${calculateTotalArticle}`;
+    console.log(quantities)
+}
+
+//suppessiion des articles
+/*
+function removeFromCart() {
+    let products = document.querySelectorAll('.cart__item');
+    const deleteBtn = document.querySelectorAll('.deleteItem');
+    console.log(deleteBtn);
+    item = item.filter(element => element.id != products.id );
+
+ 
+    deleteBtn.forEach (btn => {
+    btn.addEventListener ('click', function (){
+     removeFromCart();
+       
+    });   
+});
+}
+function changeQty() {
+
+} 
+
+/*
+function calculateArticle(){
+    let products = document.querySelectorAll('.cart__item');
+    let number = 0;
+    for (let product of products){
+        let quantite = product.querySelector('.itemQuantity').value;
+        console.log(quantite)
+        let art = number += quantite;
+        console.log(art)
+    }
+   
+}*/
