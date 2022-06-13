@@ -121,6 +121,8 @@ function createProduct(product) {
     paraDelete.innerHTML = 'Supprimer';
 
     input.setAttribute('type', 'number');
+    input.setAttribute('min', '1');
+    input.setAttribute('max', '100');
     input.setAttribute('data-id', product._id);
     input.setAttribute('data-color', product.color);
     paraDelete.setAttribute('data-id', product._id);
@@ -193,19 +195,22 @@ function updateLocalStorage(item) {
 }
 //changement des quantités
 function changeQty(event) {
+    event.preventDefault();
     console.log(event);
     let quantity = event.target.value;
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
     item.forEach((value) => {
+        event.preventDefault();
         console.log('canapId & color input', canapId, canapColor);
         console.log('valueId & valueColor', value.id, value.color);
         if (value.id == canapId && value.color == canapColor) {
             value.quantity = quantity;
             updateLocalStorage(item);
             addConfirm(); 
-            event.stopPropagation(); 
+            
         } if(value.quantity = quantity --) { 
+            event.preventDefault();
             updateLocalStorage(item);
             lessConfirm();
             console.log('change')
@@ -263,5 +268,99 @@ const removeConfirm = () => {
     window.confirm("Êtes-vous sûr de vouloir supprimer ce produit du panier?");
     window.location.href = "cart.html";
 }
+const form = document.getElementsByClassName('cart__order__form')[0];
+console.log(form);
+form.setAttribute('action', 'confirmation.html')
+const questionOrder = document.querySelectorAll('.cart__order__form__question');
+const errorId = document.querySelectorAll('.cart__order__form__question p');
+console.log(errorId);
+const errorInput = document.querySelectorAll('.cart__order__form__question input');
+console.log(errorInput)
+//const firstNameInput = document .querySelector('#firstName');
+//const firstNameError = document.getElementById('firstNameErrorMsg');
+//console.log(firstNameError)
+const orderSubmit = document.querySelector('#order');
+console.log(orderSubmit)
+const formValidEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+const formValidAll =  /^[a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+([-'\s][a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+)?$/;
+
+
+/*firstNameInput.addEventListener("input", function (event){
+    if(firstNameInput.validity.valueMissing){
+        event.preventDefault();
+        firstNameError.textContent = "Veuillez saisir votre prénom";
+        firstNameError.className = "firstNameError";
+        firstNameError.style.color = "red"; 
+        //si le format est incorrect
+    } else if(formValidAll.test(firstNameError.value) == false) {
+        event.preventDefault();
+        firstNameError.textContent = "Format invalide";
+        firstNameError.style.color = "orange";
+        
+    } else {
+    }
+});*/
+orderSubmit.addEventListener('click', submit);
+function submit(){
+    errorInput[0].addEventListener('input', function (event){
+        if(errorInput[0].validity.valueMissing){
+            event.preventDefault();
+            errorId[0].textContent = "Veuillez saisir votre prénom";
+            errorInput[0].className = "";
+            errorId[0].style.color = "red";
+            
+        }
+    
+        if(errorInput[1].validity.valueMissing){
+            event.preventDefault();
+            errorId[1].textContent = "Veuillez saisir votre nom";
+            errorId[1].className = "errorId[1]";
+            errorId[1].style.color = "red";
+        }
+    
+        if(errorInput[2].validity.valueMissing){
+            event.preventDefault();
+            errorId[2].textContent = "Veuillez saisir votre adresse";
+            errorId[2].className = "errorId[2]";
+            errorId[2].style.color = "red";
+        }
+    
+        if(errorInput[3].validity.valueMissing){
+            event.preventDefault();
+            errorId[3].textContent = "Veuillez saisir votre ville";
+            errorId[3].className = "errorId[3]";
+            errorId[3].style.color = "red";
+        }
+    
+        if(errorInput[4].validity.valueMissing){
+            event.preventDefault();
+            errorId[4].textContent = "Veuillez saisir votre adresse E-mail";
+            errorId[4].className = "errorId[4]";
+            errorId[4].style.color = "red";
+    
+        } else if(formValidAll.test && formValidEmail.test(errorId.value === false)) {
+            
+            errorId.forEach((element, index) => {
+                event.preventDefault();
+                element.textContent = "format invalide";
+                element.className = "element";
+                element.style.color = "orange";
+            });
+    
+        } else {
+    
+        }
+    });
+
+}
+submit();
+
+
+
+
+
+   
+
+
 
 
