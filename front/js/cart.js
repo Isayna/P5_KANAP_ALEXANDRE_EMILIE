@@ -201,28 +201,21 @@ function changeQty(event) {
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
     item.forEach((value) => {
-        event.preventDefault();
         console.log('canapId & color input', canapId, canapColor);
         console.log('valueId & valueColor', value.id, value.color);
         if (value.id == canapId && value.color == canapColor) {
             value.quantity = quantity;
-            updateLocalStorage(item);
-            addConfirm(); 
-            
-        } if(value.quantity = quantity --) { 
-            event.preventDefault();
-            updateLocalStorage(item);
-            lessConfirm();
-            console.log('change')
-        }
-        calculateArticle();
-        calculateTotal();
+            addConfirm();
+            } else {
+                value.quantity > quantity
+                lessConfirm();  
+            }
+            updateLocalStorage(item); 
     });
     initCart(item);
 }
 function getCart() {
     let item = localStorage.getItem("cart");
-    console.log(item);
     if (item == null) {
         return [];
     } else {
@@ -247,7 +240,7 @@ function createCart(item, canap) {
     const deleteBtn = document.querySelectorAll('.deleteItem');
     inputQty.forEach((element) => {
         element.addEventListener('change', changeQty);
-        
+
     });
 
     deleteBtn.forEach((element) => {
@@ -270,97 +263,116 @@ const removeConfirm = () => {
 }
 const form = document.getElementsByClassName('cart__order__form')[0];
 console.log(form);
-form.setAttribute('action', 'confirmation.html')
 const questionOrder = document.querySelectorAll('.cart__order__form__question');
 const errorId = document.querySelectorAll('.cart__order__form__question p');
 console.log(errorId);
-const errorInput = document.querySelectorAll('.cart__order__form__question input');
-console.log(errorInput)
-//const firstNameInput = document .querySelector('#firstName');
-//const firstNameError = document.getElementById('firstNameErrorMsg');
-//console.log(firstNameError)
+const orderInput = document.querySelectorAll('.cart__order__form__question input');
+console.log(orderInput)
 const orderSubmit = document.querySelector('#order');
 console.log(orderSubmit)
 const formValidEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-const formValidAll =  /^[a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+([-'\s][a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+)?$/;
+const formValidAll = /^[a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+([-'\s][a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+)?$/;
 
+//mise en place envoie du formulaire
 
-/*firstNameInput.addEventListener("input", function (event){
-    if(firstNameInput.validity.valueMissing){
-        event.preventDefault();
-        firstNameError.textContent = "Veuillez saisir votre prénom";
-        firstNameError.className = "firstNameError";
-        firstNameError.style.color = "red"; 
-        //si le format est incorrect
-    } else if(formValidAll.test(firstNameError.value) == false) {
-        event.preventDefault();
-        firstNameError.textContent = "Format invalide";
-        firstNameError.style.color = "orange";
-        
-    } else {
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let myForm = document.forms[0]
+    console.log(myForm)
+
+    //recupération données formulaire
+    let formContact = {
+        firstName: document.querySelector('#firstName').value,
+        lastName: myForm[1].value,
+        address: myForm[2].value,
+        city: myForm[3].value,
+        email: myForm[4].value,
+    };
+    
+    //recuperation des ID produits
+    let recupId = [];
+    item.forEach(function (element) {
+        recupId.push(element.id);
+    });
+    let formOrder = {
+        contact: formContact,
+        products: recupId,
+    };
+    localStorage.setItem('finalOrder', JSON.stringify(formOrder));
+
+    //requête post
+console.log(formOrder)
+    const url = 'http://localhost:3000/api/products/order';
+    const request = new Request(url, {
+        method: 'POST',
+        body: JSON.stringify(formOrder),
+        headers: {'Accept': 'application/json',
+        'Content-Type': 'application/json'
     }
-});*/
-orderSubmit.addEventListener('click', submit);
-function submit(){
-    errorInput[0].addEventListener('input', function (event){
-        if(errorInput[0].validity.valueMissing){
+    });
+    fetch(request)
+        .then(function (res) {
+         res.json().then(formOrder)
+        });
+});
+
+function addControl() {
+    orderInput[0].addEventListener('input', function (event) {
+        if (orderInput[0].validity.valueMissing) {
             event.preventDefault();
             errorId[0].textContent = "Veuillez saisir votre prénom";
-            errorInput[0].className = "";
             errorId[0].style.color = "red";
-            
-        }
-    
-        if(errorInput[1].validity.valueMissing){
-            event.preventDefault();
-            errorId[1].textContent = "Veuillez saisir votre nom";
-            errorId[1].className = "errorId[1]";
-            errorId[1].style.color = "red";
-        }
-    
-        if(errorInput[2].validity.valueMissing){
-            event.preventDefault();
-            errorId[2].textContent = "Veuillez saisir votre adresse";
-            errorId[2].className = "errorId[2]";
-            errorId[2].style.color = "red";
-        }
-    
-        if(errorInput[3].validity.valueMissing){
-            event.preventDefault();
-            errorId[3].textContent = "Veuillez saisir votre ville";
-            errorId[3].className = "errorId[3]";
-            errorId[3].style.color = "red";
-        }
-    
-        if(errorInput[4].validity.valueMissing){
-            event.preventDefault();
-            errorId[4].textContent = "Veuillez saisir votre adresse E-mail";
-            errorId[4].className = "errorId[4]";
-            errorId[4].style.color = "red";
-    
-        } else if(formValidAll.test && formValidEmail.test(errorId.value === false)) {
-            
-            errorId.forEach((element, index) => {
-                event.preventDefault();
-                element.textContent = "format invalide";
-                element.className = "element";
-                element.style.color = "orange";
-            });
-    
         } else {
-    
+            errorId[0].textContent = "";
         }
     });
+    orderInput[1].addEventListener('input', function (event) {
+        if (orderInput[1].validity.valueMissing) {
+            event.preventDefault();
+            errorId[1].textContent = "Veuillez saisir votre nom";
+            errorId[1].style.color = "red";
+        } else {
+            errorId[1].textContent = "";
+        }
+    });
+    orderInput[2].addEventListener('input', function (event) {
+        if (orderInput[2].validity.valueMissing) {
+            event.preventDefault();
+            errorId[2].textContent = "Veuillez saisir votre adresse";
+            errorId[2].style.color = "red";
+        } else {
+            errorId[2].textContent = "";
+        }
+    });
+    orderInput[3].addEventListener('input', function (event) {
+        if (orderInput[3].validity.valueMissing) {
+            event.preventDefault();
+            errorId[3].textContent = "Veuillez saisir votre ville";
+            errorId[3].style.color = "red";
+        } else {
+            errorId[3].textContent = "";
+        }
+    });
+    orderInput.forEach((errorId) => {
+        if (formValidAll.test === false) {
+            errorId.textContent = "format invalide";
+            errorId.style.color = "orange";
+            console.log('bonjour')
+        }
+    });
+    orderInput[4].addEventListener('input', function (event) {
+        if (orderInput[4].validity.valueMissing) {
+            event.preventDefault();
+            errorId[4].textContent = "Veuillez saisir votre adresse E-mail";
+            errorId[4].style.color = "red";
+        } else if (formValidEmail.test == false) {
+            event.preventDefault();
+            element.textContent = "format invalide";
+            element.style.color = "orange";
+        } else {
+            errorId[4].textContent = "";
+        }
 
+    });
 }
-submit();
-
-
-
-
-
-   
-
-
-
-
+addControl();
