@@ -1,12 +1,8 @@
 //appel des éléments stockés dans le localStorage sur la page panier
 let item = getCart();
-console.log(item);
 
-
-
-
+//mise en place du panier sur la page html
 async function initCart() {
-
 
     const res = await fetch("http://localhost:3000/api/products/");
     res.json().then((canap) => {
@@ -15,13 +11,11 @@ async function initCart() {
         //affichage si le panier est vide
         if (item === null || item == 0) {
             emptyCart.innerHTML += " est vide";
-
         } else {
             createCart(item, canap);
             calculateTotal();
             calculateArticle();
         }
-
     });
     return res;
 }
@@ -30,22 +24,21 @@ initCart();
 //fonction permettant d'ajouter un id à un élément HTML
 function setElementId(elem, index) {
     elem.id = `${elem.nodeName.toLowerCase()}${index}`
-
 }
 
 //fonction pour attribuer la source et la description de chaque image
 function setImgData(img, src, alt) {
     img.setAttribute('src', src);
     img.setAttribute('alt', alt);
-
 }
+
 //fonction permettant d'ajouter une class à un élément HTML (element fourni en paramètre)
 function setElementClass(elem, value) {
     elem.classList.add(value);
 }
 
+//création des élements HTML
 function createProduct(product) {
-    //création des élements HTML
     let article = document.createElement('article');
     let divImg = document.createElement('div');
     let divContent = document.createElement('div');
@@ -68,24 +61,6 @@ function createProduct(product) {
     img.innerHTML = product.imageUrl;
     input.value = product.quantity;
 
-
-    /*
-    if (product.id === product.id) {
-        const priceTotal = product.quantity * product.price ;
-        console.log(priceTotal);
-       calculTotalPrice.push(priceTotal);
-        const reduced = (accumulator, curr) => accumulator + curr;
-             const totalPrice = calculTotalPrice.reduce(reduced);
-             console.log(totalPrice);
-             let totalArticle = document.querySelector('#totalPrice');
-             console.log(totalArticle);
-             totalArticle.innerHTML = `${totalPrice}`;
-
-    }*/
-
-
-
-
     //attribution des classes aux balises HTML
     setElementClass(article, 'cart__item');
     setElementClass(divImg, 'cart__item__img');
@@ -101,9 +76,7 @@ function createProduct(product) {
     //récuperation des images 
     setImgData(img, product.imageUrl, product.altTxt);
 
-
     //mise en place du conteneur 'article' 
-
     article.appendChild(divImg);
     divImg.appendChild(img);
     article.appendChild(divContent);
@@ -137,7 +110,6 @@ function calculateTotal() {
     console.log(products)
     let calculTotalPrice = 0;
     products.forEach(product => {
-
         let prix = product.querySelector('.cart__item__price').textContent;
         let quantite = product.querySelector('.itemQuantity').value;
         let total = prix * quantite;
@@ -163,54 +135,42 @@ function calculateArticle() {
 }
 
 //suppessiion des articles
-
 function removeFromCart(event) {
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
     item.forEach((value, key) => {
-
         if (value.id == canapId && value.color == canapColor) {
             item.splice(key, 1);
-            console.log('tout supprimer')
-
             updateLocalStorage(item);
             removeConfirm();
-
         } else {
-            console.log('supprimer')
         }
         calculateArticle();
         calculateTotal();
-
     });
     initCart(item);
-
 }
 
 //mise à jour du localStorage apres changement de quantité ou suppression d'un article
 function updateLocalStorage(item) {
-
     let update = window.localStorage.setItem("cart", JSON.stringify(item));
-    console.log(update)
 }
+
 //changement des quantités
 function changeQty(event) {
-    event.preventDefault();
-    console.log(event);
     let quantity = event.target.value;
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
     item.forEach((value) => {
-        console.log('canapId & color input', canapId, canapColor);
-        console.log('valueId & valueColor', value.id, value.color);
+        addConfirm();
         if (value.id == canapId && value.color == canapColor) {
-            value.quantity = quantity;
-            addConfirm();
-            } else {
-                value.quantity > quantity
-                lessConfirm();  
-            }
-            updateLocalStorage(item); 
+            value.quantity = quantity++;
+            event.preventDefault();
+        } else {
+            value.quantity > quantity
+            value.quantity = quantity--;
+        }
+        updateLocalStorage(item);
     });
     initCart(item);
 }
@@ -248,13 +208,12 @@ function createCart(item, canap) {
 
     });
 }
-const addConfirm = () => {
+const addConfirm = (changeQty) => {
     window.confirm("Souhaitez-vous ajouter ce produit au panier?");
     window.location.href = "cart.html";
 }
-
 const lessConfirm = () => {
-    window.confirm("Souhaiter retirer une quantité du panier?");
+    window.confirm("Souhaitez-vous retirer une quantité du panier?");
     window.location.href = "cart.html";
 }
 const removeConfirm = () => {
@@ -288,7 +247,7 @@ form.addEventListener('submit', (e) => {
         city: myForm[3].value,
         email: myForm[4].value,
     };
-    
+
     //recuperation des ID produits
     let recupId = [];
     item.forEach(function (element) {
@@ -301,21 +260,25 @@ form.addEventListener('submit', (e) => {
     localStorage.setItem('finalOrder', JSON.stringify(formOrder));
 
     //requête post
-console.log(formOrder)
+
     const url = 'http://localhost:3000/api/products/order';
     const request = new Request(url, {
         method: 'POST',
         body: JSON.stringify(formOrder),
-        headers: {'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    }
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
     });
     fetch(request)
-        .then(function (res) {
-         res.json().then(formOrder)
+        .then(function (response) {
+            response.json().then(formOrder => {
+                localStorage.setItem('order', JSON.stringify(formOrder))
+                window.location.href = "confirmation.html";
+            });
         });
+    console.log(request);
 });
-
 function addControl() {
     orderInput[0].addEventListener('input', function (event) {
         if (orderInput[0].validity.valueMissing) {
