@@ -37,7 +37,7 @@ function setElementClass(elem, value) {
     elem.classList.add(value);
 }
 
-//création des élements HTML
+//fonction pour la création des élements HTML
 function createProduct(product) {
     let article = document.createElement('article');
     let divImg = document.createElement('div');
@@ -127,14 +127,14 @@ function calculateArticle() {
     products.forEach(product => {
         let quantite = product.querySelector('.itemQuantity').value;
         calculateTotalArticle = calculateTotalArticle += quantite++;
-        console.log(calculateTotalArticle)
+        console.log(calculateTotalArticle);
     });
     let quantities = document.querySelector('#totalQuantity');
     quantities.innerHTML = `${calculateTotalArticle}`;
     console.log(quantities)
 }
 
-//suppessiion des articles
+// fonction pour la suppression des articles
 function removeFromCart(event) {
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
@@ -151,12 +151,12 @@ function removeFromCart(event) {
     initCart(item);
 }
 
-//mise à jour du localStorage apres changement de quantité ou suppression d'un article
+//fonction pour la mise à jour du localStorage apres changement de quantité ou suppression d'un article
 function updateLocalStorage(item) {
     let update = window.localStorage.setItem("cart", JSON.stringify(item));
 }
 
-//changement des quantités
+// fonction pour le changement des quantités
 function changeQty(event) {
     let quantity = event.target.value;
     let canapId = event.target.getAttribute('data-id');
@@ -174,6 +174,7 @@ function changeQty(event) {
     });
     initCart(item);
 }
+//function de recupération des produits dans le localStorage
 function getCart() {
     let item = localStorage.getItem("cart");
     if (item == null) {
@@ -181,10 +182,9 @@ function getCart() {
     } else {
         return JSON.parse(item);
     }
-
 }
+//récuperation du bloc dans lequel le panier sera affiché
 function createCart(item, canap) {
-    //récuperation du bloc dans lequel le panier sera affiché
     const cartItem = document.getElementById('cart__items');
     item.forEach((item) => {
         //fusion des deux tableaux pour récuperer toutes les données à afficher dans le panier
@@ -208,6 +208,7 @@ function createCart(item, canap) {
 
     });
 }
+//fonction de confirmtion d'ajout au panier
 const addConfirm = (changeQty) => {
     window.confirm("Souhaitez-vous ajouter ce produit au panier?");
     window.location.href = "cart.html";
@@ -216,6 +217,7 @@ const lessConfirm = () => {
     window.confirm("Souhaitez-vous retirer une quantité du panier?");
     window.location.href = "cart.html";
 }
+// fonction pour supprimer un produit du panier
 const removeConfirm = () => {
     window.confirm("Êtes-vous sûr de vouloir supprimer ce produit du panier?");
     window.location.href = "cart.html";
@@ -226,17 +228,39 @@ const questionOrder = document.querySelectorAll('.cart__order__form__question');
 const errorId = document.querySelectorAll('.cart__order__form__question p');
 console.log(errorId);
 const orderInput = document.querySelectorAll('.cart__order__form__question input');
-console.log(orderInput)
+console.log(orderInput);
 const orderSubmit = document.querySelector('#order');
-console.log(orderSubmit)
-const formValidEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-const formValidAll = /^[a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+([-'\s][a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+)?$/;
+console.log(orderSubmit);
+
+//fonction regexp pour validation de formulaire
+function regex() {
+    const formValidEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    console.log(formValidEmail)
+    const formValidAll = /^[a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+([-'\s][a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+)?$/;
+    console.log(formValidAll)
+    /*
+    orderInput.addEventListener('input', function(e){
+        e.preventDefault();
+        if (formValidAll.test == false) {
+            errorId.textContent = "format invalide";
+            errorId.style.color = "orange";
+            console.log('bonjour')
+        }
+    });
+    orderInput[4].addEventListener('input', function(e){
+    if (formValidEmail.test == false) {
+        e.preventDefault();
+        errorId[4].textContent = "format invalide";
+        errorId[4].style.color = "orange";
+    }
+    });*/
+}
 
 //mise en place envoie du formulaire
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    let myForm = document.forms[0]
+    let myForm = document.forms[0];
     console.log(myForm)
 
     //recupération données formulaire
@@ -260,20 +284,19 @@ form.addEventListener('submit', (e) => {
     localStorage.setItem('finalOrder', JSON.stringify(formOrder));
 
     //requête post
-
     const url = 'http://localhost:3000/api/products/order';
     const request = new Request(url, {
         method: 'POST',
         body: JSON.stringify(formOrder),
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         }
     });
     fetch(request)
         .then(function (response) {
             response.json().then(formOrder => {
-                localStorage.setItem('order', JSON.stringify(formOrder))
+                localStorage.setItem('order', JSON.stringify(formOrder));
                 window.location.href = "confirmation.html";
             });
         });
@@ -284,58 +307,72 @@ function addControl() {
         if (orderInput[0].validity.valueMissing) {
             event.preventDefault();
             errorId[0].textContent = "Veuillez saisir votre prénom";
-            errorId[0].style.color = "red";
+            errorId[0].style.color = "blue";
+            orderInput[0].style.border = "5px solid blue";
         } else {
             errorId[0].textContent = "";
+            orderInput[0].style.border = "none";
         }
     });
     orderInput[1].addEventListener('input', function (event) {
         if (orderInput[1].validity.valueMissing) {
             event.preventDefault();
             errorId[1].textContent = "Veuillez saisir votre nom";
-            errorId[1].style.color = "red";
+            errorId[1].style.color = "blue";
+            orderInput[1].style.border = "5px solid blue";
         } else {
             errorId[1].textContent = "";
+            orderInput[1].style.border = "none";
+
         }
     });
     orderInput[2].addEventListener('input', function (event) {
         if (orderInput[2].validity.valueMissing) {
             event.preventDefault();
             errorId[2].textContent = "Veuillez saisir votre adresse";
-            errorId[2].style.color = "red";
+            errorId[2].style.color = "blue";
+            orderInput[2].style.border = "5px solid blue";
         } else {
             errorId[2].textContent = "";
+            orderInput[2].style.border = "none";
         }
     });
     orderInput[3].addEventListener('input', function (event) {
         if (orderInput[3].validity.valueMissing) {
             event.preventDefault();
             errorId[3].textContent = "Veuillez saisir votre ville";
-            errorId[3].style.color = "red";
+            errorId[3].style.color = "blue";
+            orderInput[3].style.border = "5px solid blue";
         } else {
             errorId[3].textContent = "";
+            orderInput[3].style.border = "none";
         }
     });
-    orderInput.forEach((errorId) => {
-        if (formValidAll.test === false) {
-            errorId.textContent = "format invalide";
-            errorId.style.color = "orange";
-            console.log('bonjour')
-        }
-    });
+    /* orderInput.forEach((errorId) => {
+         orderInput.addEventListener('input', function(e){
+             e.preventDefault();
+             if (formValidAll.test === false) {
+                 errorId.textContent = "format invalide";
+                 errorId.style.color = "orange";
+                 console.log('bonjour')
+             }
+         });
+     });*/
     orderInput[4].addEventListener('input', function (event) {
         if (orderInput[4].validity.valueMissing) {
             event.preventDefault();
             errorId[4].textContent = "Veuillez saisir votre adresse E-mail";
-            errorId[4].style.color = "red";
-        } else if (formValidEmail.test == false) {
-            event.preventDefault();
-            element.textContent = "format invalide";
-            element.style.color = "orange";
+            errorId[4].style.color = "blue";
+            orderInput[4].style.border = "5px solid blue";
+            /*} else if (formValidEmail.test == false) {
+                event.preventDefault();
+                errorId[4].textContent = "format invalide";
+                errorId[4].style.color = "orange";*/
         } else {
             errorId[4].textContent = "";
+            orderInput[4].style.border = "none"
         }
-
     });
 }
+regex();
 addControl();

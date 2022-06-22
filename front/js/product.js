@@ -18,14 +18,14 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
 
     //Intégration de l'image du canapé choisi
     let img = document.getElementsByClassName("item__img")[0];
-    
+
     img.innerHTML +=
       '<img src="' + canap.imageUrl + '" alt="' + canap.altTxt + '"/>';
 
     //récupération de chaque élément du DOM pour placer les informations nécessaires pour chaque produit  
     let title = document.getElementById("title");
     let para = document.getElementById("description");
-    
+
     let price = document.getElementById("price");
     let select = document.getElementById("colors");
 
@@ -44,26 +44,23 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     para.innerHTML = canap.description;
 
 
-//Création de la boucle pour chaque canapé choisi sur la page d'accueil avec l'option de sa couleur
-    
+    //Création de la boucle pour chaque canapé choisi sur la page d'accueil avec l'option de sa couleur
+
     canap.colors.forEach((color, index) => {
       document.getElementById("colors").innerHTML +=
-        `<option id='option-${index}' value="${color}">${color}</option>` 
-
+        `<option id='option-${index}' value="${color}">${color}</option>`
     });
 
     const btn = document.getElementById('addToCart');
-    
-
     let colors = document.getElementById('colors');
-    colors.addEventListener('change', function() {
+    colors.addEventListener('change', function () {
       productSelected.color = colors.value;
     });
 
     let quantity = document.getElementById('quantity');
     console.log(quantity)
-    quantity.addEventListener('click', function() {
-    productSelected.quantity = quantity.value;
+    quantity.addEventListener('click', function () {
+      productSelected.quantity = quantity.value;
     });
 
     let productSelected = {
@@ -75,52 +72,47 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     let cart = getCart();
     console.log(cart);
 
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const popupConfirm = () => {
-
-        if(window.confirm(`${canap.name} ${colors.value} a bien été ajouté au panier 
-        Pour consulter le panier appuyez OK ou ANNULER pour revenir à l'accueil`)){
-       window.location.href = "cart.html";
-      } else {
-       window.location.href = "index.html";
-      }}   
-
+        if (window.confirm(`${canap.name} ${colors.value} a bien été ajouté au panier 
+        Pour consulter le panier appuyez OK ou ANNULER pour revenir à l'accueil`)) {
+          window.location.href = "cart.html";
+        } else {
+          window.location.href = "index.html";
+        }
+      }
       let colorValue = colors.value;
       let quantityValue = quantity.value;
       console.log(quantityValue);
       console.log(colorValue);
-
-      if(colorValue === '') {
+      if (colorValue === '') {
         return;
       }
-      if(quantityValue === 0 || quantityValue > 100){
+      if (quantityValue === 0 || quantityValue > 100) {
         return;
       }
-
       let add = true;
 
-      if(cart === 0) {
+      if (cart === 0) {
         productSelected.quantity = quantityValue;
         productSelected.color = colorValue;
         cart.push(productSelected);
         popupConfirm();
       } else {
         cart.forEach((canap) => {
-          if((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
+          if ((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
             productSelected.quantity = 1;
-          add = false;
-          popupConfirm();
+            add = false;
+            popupConfirm();
           }
         });
-        
-        if (add){
+        if (add) {
           cart.push(productSelected);
           popupConfirm();
         }
       }
-      
-    window.localStorage.setItem("cart", JSON.stringify(cart));
-      console.log('cart', cart); 
+      window.localStorage.setItem("cart", JSON.stringify(cart));
+      console.log('cart', cart);
     });
   });
 });
@@ -130,24 +122,27 @@ function setImgData(img, src, alt) {
   img.setAttribute("src", src);
   img.setAttribute("alt", alt);
 }
+
 //fonction permettant d'ajouter un id à un élément HTML
 function setElementId(elem, modifier) {
   elem.id = `${elem.nodeName.toLowerCase()}${modifier}`;
 }
+
 //fonction permettant d'ajouter une class à un élément HTML (element fourni en paramètre)
 function setElementClass(elem, value) {
   elem.classList.add(value);
   console.log(value);
 }
-function getCart(){
+
+//fonction ermettant de récupérer les produits du local storage
+function getCart() {
   let item = window.localStorage.getItem("cart");
   console.log(item);
-  if(item == null) {
+  if (item == null) {
     return [];
   } else {
     return JSON.parse(item);
   }
-  
 }
 
 
