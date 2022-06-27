@@ -74,8 +74,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
 
     btn.addEventListener('click', function () {
       const popupConfirm = () => {
-        if (window.confirm(`${canap.name} ${colors.value} a bien été ajouté au panier 
-        Pour consulter le panier appuyez OK ou ANNULER pour revenir à l'accueil`)) {
+        if (window.confirm(`${canap.name} ${colors.value} a bien été ajouté au panier, pour consulter le panier appuyez OK ou ANNULER pour revenir à l'accueil`)) {
           window.location.href = "cart.html";
         } else {
           window.location.href = "index.html";
@@ -103,7 +102,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
           if ((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
             productSelected.quantity = 1;
             add = false;
-            popupConfirm();
+            //popupConfirm();
           }
         });
         if (add) {

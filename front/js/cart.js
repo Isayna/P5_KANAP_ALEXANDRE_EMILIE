@@ -162,13 +162,13 @@ function changeQty(event) {
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
     item.forEach((value) => {
-        addConfirm();
         if (value.id == canapId && value.color == canapColor) {
-            value.quantity = quantity++;
+            value.quantity = quantity;
+            addConfirm();
             event.preventDefault();
-        } else {
-            value.quantity > quantity
+        } else if (value.quantity > quantity) {
             value.quantity = quantity--;
+            lessConfirm();
         }
         updateLocalStorage(item);
     });
@@ -209,11 +209,11 @@ function createCart(item, canap) {
     });
 }
 //fonction de confirmtion d'ajout au panier
-const addConfirm = (changeQty) => {
+let addConfirm = (changeQty) => {
     window.confirm("Souhaitez-vous ajouter ce produit au panier?");
     window.location.href = "cart.html";
 }
-const lessConfirm = () => {
+let lessConfirm = () => {
     window.confirm("Souhaitez-vous retirer une quantité du panier?");
     window.location.href = "cart.html";
 }
@@ -232,28 +232,89 @@ console.log(orderInput);
 const orderSubmit = document.querySelector('#order');
 console.log(orderSubmit);
 
-//fonction regexp pour validation de formulaire
-function regex() {
-    const formValidEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    console.log(formValidEmail)
-    const formValidAll = /^[a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+([-'\s][a-zA-ZéèîïÉÈÎÏ][a-zéèêàçîï]+)?$/;
-    console.log(formValidAll)
-    /*
-    orderInput.addEventListener('input', function(e){
-        e.preventDefault();
-        if (formValidAll.test == false) {
-            errorId.textContent = "format invalide";
-            errorId.style.color = "orange";
-            console.log('bonjour')
-        }
-    });
-    orderInput[4].addEventListener('input', function(e){
-    if (formValidEmail.test == false) {
-        e.preventDefault();
-        errorId[4].textContent = "format invalide";
-        errorId[4].style.color = "orange";
+//fonction regexp pour vérification de la validité de l'adresse mail
+function isEmailValid() {
+    const emailError = document.querySelector('#email').value;
+    const formValidEmail = new RegExp(
+        /^[a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1}([a-zA-Z0-9][\-_\.\+\!\#\$\%\&\'\*\/\=\?\^\`\{\|]{0,1})*[a-zA-Z0-9]@[a-zA-Z0-9][-\.]{0,1}([a-zA-Z][-\.]{0,1})*[a-zA-Z0-9]\.[a-zA-Z0-9]{1,}([\.\-]{0,1}[a-zA-Z]){0,}[a-zA-Z0-9]{0,}$/i
+    );
+    let emailResult = formValidEmail.test(emailError);
+    if (emailResult == false) {
+        errorId[4].textContent = "Veuillez saisir une adresse E-mail valide";
+        errorId[4].style.color = "blue";
+        orderInput[4].style.border = "5px solid blue";
+        return false;
+    } else {
+        errorId[4].textContent = "";
+        orderInput[4].style.border = "none"
+        return true;
     }
-    });*/
+}
+
+//fonction regexp pour la vérification de la validité des prénoms
+function isNameValid() {
+    const firstNameError = document.querySelector('#firstName').value;
+    const formValidName = new RegExp(/^[a-zA-Z]/);
+    let firstNameResult = formValidName.test(firstNameError);
+    if (firstNameResult == false) {
+        errorId[0].textContent = "Veuillez saisir un prénom valide";
+        errorId[0].style.color = "blue";
+        orderInput[0].style.border = "5px solid blue";
+        return false;
+    } else {
+        errorId[0].textContent = "";
+        orderInput[0].style.border = "none";
+        return true;
+    }
+}
+
+//fonction regexp pour la vérification de la validité des noms
+function isLastNameValid() {
+    const lastNameError = document.querySelector('#lastName').value;
+    const formValidName = new RegExp(/^[a-zA-Z]/);
+    let lastNameResult = formValidName.test(lastNameError);
+    if (lastNameResult == false) {
+        errorId[1].textContent = "Veuillez saisir votre nom";
+        errorId[1].style.color = "blue";
+        orderInput[1].style.border = "5px solid blue";
+        return false;
+    } else {
+        errorId[1].textContent = "";
+        orderInput[1].style.border = "none";
+        return true;
+    }
+}
+//fonction validation adresse
+function isAdresseValid() {
+    const adressError = document.querySelector('#address').value;
+    const formValidAdresse = new RegExp(/^[a-zA-Z0-9]/);
+    let adresseResult = formValidAdresse.test(adressError);
+    if (adresseResult == false) {
+        errorId[2].textContent = "Veuillez saisir votre adresse";
+        errorId[2].style.color = "blue";
+        orderInput[2].style.border = "5px solid blue";
+        return false;
+    } else {
+        errorId[2].textContent = "";
+        orderInput[2].style.border = "none";
+        return true;
+    }
+}
+//fonction validation ville
+function isCityValid() {
+    const cityError = document.querySelector('#city').value;
+    const formValidCity = new RegExp(/^[a-zA-Z]/);
+    let cityResult = formValidCity.test(cityError);
+    if(cityResult == false) {
+        errorId[3].textContent = "Veuillez saisir votre ville";
+        errorId[3].style.color = "blue";
+        orderInput[3].style.border = "5px solid blue";
+        return false;
+    } else {
+        errorId[3].textContent = "";
+        orderInput[3].style.border = "none";
+        return true;
+    }
 }
 
 //mise en place envoie du formulaire
@@ -300,79 +361,28 @@ form.addEventListener('submit', (e) => {
                 window.location.href = "confirmation.html";
             });
         });
-    console.log(request);
 });
+
+//fonction validation des inputs
 function addControl() {
     orderInput[0].addEventListener('input', function (event) {
-        if (orderInput[0].validity.valueMissing) {
-            event.preventDefault();
-            errorId[0].textContent = "Veuillez saisir votre prénom";
-            errorId[0].style.color = "blue";
-            orderInput[0].style.border = "5px solid blue";
-        } else {
-            errorId[0].textContent = "";
-            orderInput[0].style.border = "none";
-        }
+        isNameValid();
     });
-    orderInput[1].addEventListener('input', function (event) {
-        if (orderInput[1].validity.valueMissing) {
-            event.preventDefault();
-            errorId[1].textContent = "Veuillez saisir votre nom";
-            errorId[1].style.color = "blue";
-            orderInput[1].style.border = "5px solid blue";
-        } else {
-            errorId[1].textContent = "";
-            orderInput[1].style.border = "none";
 
-        }
+    orderInput[1].addEventListener('input', function (event) {
+        isLastNameValid();
     });
+
     orderInput[2].addEventListener('input', function (event) {
-        if (orderInput[2].validity.valueMissing) {
-            event.preventDefault();
-            errorId[2].textContent = "Veuillez saisir votre adresse";
-            errorId[2].style.color = "blue";
-            orderInput[2].style.border = "5px solid blue";
-        } else {
-            errorId[2].textContent = "";
-            orderInput[2].style.border = "none";
-        }
+        isAdresseValid();
     });
+
     orderInput[3].addEventListener('input', function (event) {
-        if (orderInput[3].validity.valueMissing) {
-            event.preventDefault();
-            errorId[3].textContent = "Veuillez saisir votre ville";
-            errorId[3].style.color = "blue";
-            orderInput[3].style.border = "5px solid blue";
-        } else {
-            errorId[3].textContent = "";
-            orderInput[3].style.border = "none";
-        }
+        isCityValid();
     });
-    /* orderInput.forEach((errorId) => {
-         orderInput.addEventListener('input', function(e){
-             e.preventDefault();
-             if (formValidAll.test === false) {
-                 errorId.textContent = "format invalide";
-                 errorId.style.color = "orange";
-                 console.log('bonjour')
-             }
-         });
-     });*/
+
     orderInput[4].addEventListener('input', function (event) {
-        if (orderInput[4].validity.valueMissing) {
-            event.preventDefault();
-            errorId[4].textContent = "Veuillez saisir votre adresse E-mail";
-            errorId[4].style.color = "blue";
-            orderInput[4].style.border = "5px solid blue";
-            /*} else if (formValidEmail.test == false) {
-                event.preventDefault();
-                errorId[4].textContent = "format invalide";
-                errorId[4].style.color = "orange";*/
-        } else {
-            errorId[4].textContent = "";
-            orderInput[4].style.border = "none"
-        }
+        isEmailValid();
     });
 }
-regex();
 addControl();
