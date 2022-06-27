@@ -102,7 +102,7 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
           if ((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
             productSelected.quantity = 1;
             add = false;
-            //popupConfirm();
+            popupConfirm();
           }
         });
         if (add) {
