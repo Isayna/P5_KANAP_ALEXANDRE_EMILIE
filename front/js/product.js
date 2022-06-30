@@ -72,7 +72,20 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     let cart = getCart();
     console.log(cart);
 
+    let add = true;
+
+    function addSameProduct() {
+      cart.forEach((productSelected) => {
+        if(productSelected.id === canap._id && productSelected.color === productSelected.color) {
+          console.log('hello')
+          productSelected.quantity ++;
+          add = false
+    }
+      });
+      }
+
     btn.addEventListener('click', function () {
+      //fonction confirmation d'ajout au panier
       const popupConfirm = () => {
         if (window.confirm(`${canap.name} ${colors.value} a bien été ajouté au panier, pour consulter le panier appuyez OK ou ANNULER pour revenir à l'accueil`)) {
           window.location.href = "cart.html";
@@ -84,32 +97,28 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
       let quantityValue = quantity.value;
       console.log(quantityValue);
       console.log(colorValue);
-      if (colorValue === '') {
+      if(colorValue === '') {
         return;
       }
-      if (quantityValue === 0 || quantityValue > 100) {
+      if(quantityValue === 0 || quantityValue > 100) {
         return;
       }
-      let add = true;
-
-      if (cart === 0) {
+      
+      if(cart === 0) {
         productSelected.quantity = quantityValue;
         productSelected.color = colorValue;
         cart.push(productSelected);
         popupConfirm();
       } else {
-        cart.forEach((canap) => {
-          if ((productSelected.id === canap.id) && (productSelected.color === canap.colors)) {
-            productSelected.quantity = 1;
-            add = false;
-            popupConfirm();
+        addSameProduct();
+        popupConfirm();
+       
           }
-        });
-        if (add) {
+        if(add) {
           cart.push(productSelected);
           popupConfirm();
         }
-      }
+      
       window.localStorage.setItem("cart", JSON.stringify(cart));
       console.log('cart', cart);
     });
@@ -143,7 +152,6 @@ function getCart() {
     return JSON.parse(item);
   }
 }
-
 
 
 
