@@ -72,17 +72,9 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
     let cart = getCart();
     console.log(cart);
 
-    let add = true;
+    
 
-    function addSameProduct() {
-      cart.forEach((productSelected) => {
-        if(productSelected.id === canap._id && productSelected.color === productSelected.color) {
-          console.log('hello')
-          productSelected.quantity ++;
-          add = false
-    }
-      });
-      }
+    
 
     btn.addEventListener('click', function () {
       //fonction confirmation d'ajout au panier
@@ -93,32 +85,32 @@ fetch(`http://localhost:3000/api/products/${id}`).then(function (res) {
           window.location.href = "index.html";
         }
       }
+      let add = true;
       let colorValue = colors.value;
-      let quantityValue = quantity.value;
+      let quantityValue = parseInt(quantity.value);
       console.log(quantityValue);
       console.log(colorValue);
-      if(colorValue === '') {
+      if (colorValue === '') {
         return;
       }
-      if(quantityValue === 0 || quantityValue > 100) {
+      if (quantityValue === 0 || quantityValue > 100) {
         return;
       }
+      console.log(cart);
       
-      if(cart === 0) {
-        productSelected.quantity = quantityValue;
-        productSelected.color = colorValue;
-        cart.push(productSelected);
-        popupConfirm();
-      } else {
-        addSameProduct();
-        popupConfirm();
-       
+        cart.forEach((product) => {
+          if ((product.id === productSelected.id) && (product.color === productSelected.color)) {
+            console.log('hello');
+            console.log(productSelected);
+            product.quantity =  parseInt(product.quantity) + parseInt(productSelected.quantity);
+            add = false
           }
-        if(add) {
-          cart.push(productSelected);
-          popupConfirm();
-        }
-      
+        });
+        popupConfirm();
+      if (add) {
+        cart.push(productSelected);
+      }
+
       window.localStorage.setItem("cart", JSON.stringify(cart));
       console.log('cart', cart);
     });
