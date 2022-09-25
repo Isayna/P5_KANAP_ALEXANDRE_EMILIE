@@ -162,14 +162,10 @@ function changeQty(event) {
     let canapId = event.target.getAttribute('data-id');
     let canapColor = event.target.getAttribute('data-color');
     item.forEach((value) => {
-        if (value.id == canapId && value.color == canapColor) {
+        if ((value.id === canapId) && (value.color === canapColor)) {
+            changeConfirm();
             value.quantity = quantity;
-            addConfirm();
-            event.preventDefault();
-        } else if (value.quantity > quantity) {
-            value.quantity = quantity--;
-            lessConfirm();
-        }
+        } 
         updateLocalStorage(item);
     });
     initCart(item);
@@ -195,28 +191,22 @@ function createCart(item, canap) {
         cartItem.appendChild(article);
 
     });
-
     const inputQty = document.querySelectorAll('.itemQuantity');
     const deleteBtn = document.querySelectorAll('.deleteItem');
     inputQty.forEach((element) => {
-        element.addEventListener('change', changeQty);
-
+        element.addEventListener('change', changeQty) 
+        
     });
-
     deleteBtn.forEach((element) => {
         element.addEventListener('click', removeFromCart);
-
     });
 }
 //fonction de confirmtion d'ajout au panier
-let addConfirm = (changeQty) => {
-    window.confirm("Souhaitez-vous ajouter ce produit au panier?");
+let changeConfirm = () => {
+    window.confirm("Pour ajouter un produit au panier cliquer OK, sinon annuler");
     window.location.href = "cart.html";
 }
-let lessConfirm = () => {
-    window.confirm("Souhaitez-vous retirer une quantité du panier?");
-    window.location.href = "cart.html";
-}
+
 // fonction pour supprimer un produit du panier
 const removeConfirm = () => {
     window.confirm("Êtes-vous sûr de vouloir supprimer ce produit du panier?");
